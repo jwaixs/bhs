@@ -243,4 +243,12 @@ class ClebschGordanCoefficients():
         
         
         return line1*line2*line3*line4
-print 1/2
+
+# Calculate some simple Clebsch-Gordan coefficients
+q = var('q')
+for i in range(2):
+    for j in range(2):
+        cg = ClebschGordanCoefficients(q, 1/2, 1/2, 1, 1/2 - i, 1/2 - j, 1 - i - j)
+        print cg, '=',
+        cg.transform2one()
+        print cg.evaluate()
