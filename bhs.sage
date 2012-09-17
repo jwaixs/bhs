@@ -209,6 +209,9 @@ class ClebschGordanCoefficients():
             return 0
     
     def evaluate(self):
+        if self.currentClass() == 0:
+            return 0
+
         qpoch = qPochhammer(1, expand=self.expand)
         bhs   = BasicHypergeometricSeries(3,2,expand=self.expand)
         l1, l2, l, q, j1, j2, j = self.l1, self.l2, self.l, self.q, \
@@ -245,10 +248,12 @@ class ClebschGordanCoefficients():
         return line1*line2*line3*line4
 
 # Calculate some simple Clebsch-Gordan coefficients
-q = var('q')
-for i in range(2):
-    for j in range(2):
-        cg = ClebschGordanCoefficients(q, 1/2, 1/2, 1, 1/2 - i, 1/2 - j, 1 - i - j)
-        print cg, '=',
-        cg.transform2one()
-        print cg.evaluate()
+#q = var('q')
+#p = 1
+#l = 1
+#for i in range(-(l+p), (l+p)+1, 2):
+#    for j in range(-(l-p), (l-p)+1, 2):
+#        cg = ClebschGordanCoefficients(q, (l+p)/2, (l-p)/2, l, i/2, j/2, (i+j)/2)
+#        print cg, '=',
+#        cg.transform2one()
+#        print cg.evaluate()
