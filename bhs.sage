@@ -1,5 +1,6 @@
 from sage.symbolic.function import BuiltinFunction, is_inexact 
-
+from sage.rings.integer import Integer
+from sage.symbolic.expression import Expression
 
 class qPochhammer(BuiltinFunction):
     
@@ -182,7 +183,7 @@ class ClebschGordanCoefficients():
     def currentClass(self):
         l1, l2, l, j1, j2, j = self.l1, self.l2, self.l, self.j1, self.j2, self.j
 
-        if abs(j1) > l1 or abs(j2) > l2 or l > l1+l2:
+        if abs(j1) > l1 or abs(j2) > l2 or l > l1+l2 or j1+j2 != j:
             return 0    # No class
 
         if l1-l2 <= j and j <= l2-l1 and l2-l1 <= l:
@@ -212,8 +213,8 @@ class ClebschGordanCoefficients():
         if self.currentClass() == 0:
             return 0
 
-        qpoch = qPochhammer(1, expand=self.expand)
-        bhs   = BasicHypergeometricSeries(3,2,expand=self.expand)
+        qpoch = qPochhammer(1, expand=True)
+        bhs   = BasicHypergeometricSeries(3,2,expand=True)
         l1, l2, l, q, j1, j2, j = self.l1, self.l2, self.l, self.q, \
                                   self.j1, self.j2, self.j
 
@@ -247,13 +248,15 @@ class ClebschGordanCoefficients():
         
         return line1*line2*line3*line4
 
-# Calculate some simple Clebsch-Gordan coefficients
-#q = var('q')
-#p = 1
-#l = 1
-#for i in range(-(l+p), (l+p)+1, 2):
-#    for j in range(-(l-p), (l-p)+1, 2):
-#        cg = ClebschGordanCoefficients(q, (l+p)/2, (l-p)/2, l, i/2, j/2, (i+j)/2)
-#        print cg, '=',
-#        cg.transform2one()
-#        print cg.evaluate()
+def cgc(q, l1, l2, l, j1, j2, j, algorithm='sage'):
+    cg = ClebschGordanCoefficients(q, l1, l2, l, j1, j2, j)
+    cg.transform2one()    
+
+    evaluation = cg.evaluate()
+
+    if type(evaluation) != Expression:
+        return evaluation
+
+    if algorithm == 'mathematica':
+        return mathematica(evaluation).Simplify().sage()
+    return evaluation.simplify()
