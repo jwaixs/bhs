@@ -15,3 +15,10 @@ for n in range(10):
     newplot.append(text('0:%s' % str(n/2), (0.1, recurrence[n][0].substitute(q=0.1))))
     newplot.append(text('1:%s' % str(n/2), (0.1, recurrence[n][1].substitute(q=0.1))))
     sum(newplot).save('recurrenceplot_%i.png' % n)
+
+newplot = []
+for n in range(14):
+    newplot.append(point((n, recurrence[n][0].substitute(q=0.5)), color="pink"))
+    newplot.append(point((n, recurrence[n][1].substitute(q=0.5))))
+
+sum(newplot).save('recurrencepoints.png')
