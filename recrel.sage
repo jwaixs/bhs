@@ -2,7 +2,7 @@ from itertools import product
 
 load('bhs.sage')
 
-def recrel_a(q, l1, l2, m1, m2, l, simplify_algorithm='mathematica'):
+def recrel_a(q, l1, l2, m1, m2, l):
     total_sum = 0
     for i1, i2, j1, j2, n1, n2 in product(range(2*l1+1), range(2*l2+1),\
         range(2), range(2), range(2*m1+1), range(2*m2+1)):
@@ -11,28 +11,41 @@ def recrel_a(q, l1, l2, m1, m2, l, simplify_algorithm='mathematica'):
                             or i2-l1+j2-1/2 != n2-m2 or n1-m1+n2-m2 != l:
             continue
 
-        cg1 = ClebschGordanCoefficients(q, l1, l2, l, i1-l1, i2-l2, l)
-        cg2 = ClebschGordanCoefficients(q, 1/2, 1/2, 0, j1-1/2, j2-1/2, 0)
-        cg3 = ClebschGordanCoefficients(q, l1, 1/2, m1, i1-l1, j1-1/2, n1-m1)
-        cg4 = ClebschGordanCoefficients(q, l2, 1/2, m2, i2-l2, j2-1/2, n2-m2)
-        cg5 = ClebschGordanCoefficients(q, m1, m2, l, n1-m1, n2-m2, l)
+        cg1 = cgc(q, l1, l2, l, i1-l1, i2-l2, l)
+        if sign(cg1.substitute(q=1/2)) != sign(clebsch_gordan(l1, l2, l, i1-l1, i2-l2, l)):
+            cg1 = -cg1
 
-        print cg1, cg2, cg3, cg4, cg5
+        cg2 = cgc(q, 1/2, 1/2, 0, j1-1/2, j2-1/2, 0)
+        if sign(cg2.substitute(q=1/2)) != sign(clebsch_gordan(1/2, 1/2, 0, j1-1/2, j2-1/2, 0)):
+            cg2 = -cg2
+
+        cg3 = cgc(q, l1, 1/2, m1, i1-l1, j1-1/2, n1-m1)
+        if sign(cg3.substitute(q=1/2)) != sign(clebsch_gordan(l1, 1/2, m1, i1-l1, j1-1/2, n1-m1)):
+            cg3 = -cg3
+
+        cg4 = cgc(q, l2, 1/2, m2, i2-l2, j2-1/2, n2-m2)
+        if sign(cg4.substitute(q=1/2)) != sign(clebsch_gordan(l1, 1/2, m2, i2-l2, j2-1/2, n2-m2)):
+            cg4 = -cg4
+
+        cg5 = cgc(q, m1, m2, l, n1-m1, n2-m2, l)
+        if sign(cg5.substitute(q=1/2)) != sign(clebsch_gordan(m1, m2, l, n1-m1, n2-m2, l)):
+            cg5 = -cg5
 
         cg_list = [cg1, cg2, cg3, cg4, cg5]
-        map(lambda elm : elm.transform2one(), cg_list)
-        if simplify_algorithm == 'mathematica':
-            evaluation = [ elm.evaluate() for elm in cg_list]
-            evaluation = [ mathematica(elm).Simplify().sage() for elm in evaluation ]
-        else:
-            evaluation = [ elm.evaluate() for elm in cg_list ]
-        total_sum += prod(evaluation)
-    
-    if simplify_algorithm == 'mathematica':
-        total_sum = mathematica(total_sum).Simplify().sage()
+        total_sum += prod(cg_list)
 
     return total_sum
 
 q = var('q')
-print recrel_a(q, 1/2, 1/2, 0, 0, 0)
-print recrel_a(q, 1/2, 1/2, 1, 1, 0)
+print "Calculate the first few recurrence relation elements (could take a while):"
+recurrence = []
+print "l = 0"
+recurrence.append((0, mathematica(recrel_a(q, 0, 0, 1/2, 1/2, 0)).Simplify().sage()))
+print recurrence[-1]
+for l in range(1, 5):
+    print "l = %i" % (l)
+    a1 = mathematica(recrel_a(q, l, l, l-1/2, l-1/2, 0)).Simplify().sage()
+    a2 = mathematica(recrel_a(q, l, l, l+1/2, l+1/2, 0)).Simplify().sage()
+    print a1, a2
+    recurrence.append((a1, a2))
+    
