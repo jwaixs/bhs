@@ -42,7 +42,7 @@ recurrence = []
 print "l = 0"
 recurrence.append((0, mathematica(recrel_a(q, 0, 0, 1/2, 1/2, 0)).Simplify().sage()))
 print recurrence[-1]
-for l in range(1, 10):
+for l in range(1, 14):
     print "l = %s" % (l/2)
     a1 = mathematica(recrel_a(q, l/2, l/2, l/2-1/2, l/2-1/2, 0)).Simplify().sage()
     a2 = mathematica(recrel_a(q, l/2, l/2, l/2+1/2, l/2+1/2, 0)).Simplify().sage()
