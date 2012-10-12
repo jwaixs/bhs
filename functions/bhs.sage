@@ -64,7 +64,6 @@ class qPochhammer(BuiltinFunction):
     def __init__(self, m=1, expand_exp=False):
         self.m = m
         self.expand_exp = expand_exp
-        self.has_arguments = False
 
         BuiltinFunction.__init__(self, 'qPochhammer(%i)' % self.m, nargs=(m+2))
 
@@ -85,6 +84,10 @@ class qPochhammer(BuiltinFunction):
     def _eval_(self, *args):
         if len(args) != self.m + 2:
             raise RuntimeError, args
+
+        # Implementation for infinity oo
+        if args[-1] == oo:
+            return None # no expantion
         
         if self.expand_exp:
             return self.evaluate(args[:self.m], args[-2], args[-1])
@@ -97,15 +100,10 @@ class qPochhammer(BuiltinFunction):
         return self._qPochhammer1(self.a, self.q, self.n)
         
     def evaluate(self, a, q, n):
-        self.a = a
-        self.q = q
-        self.n = n
-
-        self.has_arguments = True
-
+        
         if type(self.a) == tuple:
             return self._expand()
-        return self._qPochhammer1(self.a, self.q, self.n)
+        return self._qPochhammer1(a, q, n)
 
 
 class BasicHypergeometricSeries(BuiltinFunction):
