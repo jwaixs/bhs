@@ -54,6 +54,11 @@ class qPochhammer(BuiltinFunction):
 
     Expand expression for more q-shifted factorials::
 
+        sage: a, b, c, q = var('a b c q')
+        sage: qshift3 = qPochhammer(m=3, expand_exp=True)
+        sage: qshift3(a, b, c, q, 2)
+        (c - 1)*(b - 1)*(a - 1)*(c*q - 1)*(b*q - 1)*(a*q - 1)
+
     """
 
     def __init__(self, m=1, expand_exp=False):
@@ -104,11 +109,52 @@ class qPochhammer(BuiltinFunction):
 
 
 class BasicHypergeometricSeries(BuiltinFunction):
+    r"""
+    BasicHypergeometricSeries computes the Basic Hypergeometric Series
+
+    INPUT:
+        - ``m`` - Integer, 2 by default, gives the number of elements in the
+                  nominator.
+        - ``n`` - Integer, 1 by default, gives the number of elements in the
+                  denominator,
+        - ``expand_exp`` - Boolean, False by default, if expression should be
+                           expanded.
+
+    OUTPUT:
+        - Builtinfunction which can compute certain basic hypergeometric 
+          series.
+
+    EXAMPLES:
+
+    Most simple example::
+
+        sage: a, b, c, q, z = var('a b c q z')
+        sage: phi = BasicHypergeometricSeries()
+        sage: phi(a, b, c, q, z)
+        bhs(2,1)(a, b, c, q, z)
+
+    Expand expression::
+
+        sage: phi = BasicHypergeometricSeries(expand_exp=True)
+        sage: phi(q**(-2), a, b, q, z)
+        (1/q^2 - 1)*(1/q - 1)*(a - 1)*(a*q - 1)*z^2/((b - 1)*(b*q - 1)*q) 
+            + (1/q^2 - 1)*(a - 1)*z/(b - 1) + 1
+
+    Use different amount of nominator/denominator::
+
+        sage: phi = BasicHypergeometricSeries(m=4, n=2, expand_exp=True)
+        sage: phi = BasicHypergeometricSeries(m=4, n=2, expand_exp=True)
+        sage: phi(q**(-2), a1, a2, a3, b1, b2, q, z)
+        (1/q^2 - 1)*(1/q - 1)*(a3 - 1)*(a2 - 1)*(a1 - 1)*(a3*q - 1)*(a2*q - 1)
+            *(a1*q - 1)*z^2/((b2 - 1)*(b1 - 1)*(b2*q - 1)*(b1*q - 1)*q^2) 
+            + (1/q^2 - 1)*(a3 - 1)*(a2 - 1)*(a1 - 1)*z/((b2 - 1)*(b1 - 1)) + 1
+
+    """
     
-    def __init__(self, m=2, n=1, expand=False):
+    def __init__(self, m=2, n=1, expand_exp=False):
         self.m = m
         self.n = n
-        self.expand = expand
+        self.expand = expand_exp
         self.has_arguments = False
 
         BuiltinFunction.__init__(self, 'bhs(%i,%i)' % (m, n), nargs=(m+n+2), 
@@ -153,36 +199,4 @@ class BasicHypergeometricSeries(BuiltinFunction):
     def _evalf_(self, *args, **kwds):
         return self.expand_bhs()
 
-
-## q-Orthogonal polynomials
-class littleqJacobiPolynomials(BuiltinFunction):
-
-    def __init__(self, expand=True):
-        self.expand = expand
-        self.has_arguments = False
-
-        BuiltinFunction.__init__(self, 'lqjp', nargs=5, latex_name="p")
-
-    def _eval_(self, *args):
-        if len(args) != 5:
-            raise RuntimeError, args
-        
-        self.x = args[0]
-        self.a = args[1]
-        self.b = args[2]
-        self.q = args[3]
-        self.n = args[4]
-
-        self.has_arguments = True
-
-        self.bhs = BasicHypergeometricSeries(2,1,expand=self.expand)
-        if self.expand:
-            return self.bhs(self.q**(-self.n), self.a*self.b*self.q**(self.n+1), \
-                            self.a*self.q, self.q, self.q*self.x)
-  
-        return None
-
-    def general(self, n):
-        x, a, b, q = var('x a b q')
-        return self._eval_(x, a, b, q, n)
 
