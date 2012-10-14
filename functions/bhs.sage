@@ -77,9 +77,8 @@ class qPochhammer(BuiltinFunction):
             return 1
         return (1 - a*q**(n-1))*self._qPochhammer1(a, q, n-1)
 
-    def _expand(self):
-        return prod([self._qPochhammer1(elm, self.q, self.n) \
-                     for elm in self.a])
+    def _expand(self, a, q, n):
+        return prod([self._qPochhammer1(elm, q, n) for elm in a])
 
     def _eval_(self, *args):
         if len(args) != self.m + 2:
@@ -95,14 +94,17 @@ class qPochhammer(BuiltinFunction):
         return None
 
     def _evalf_(self, *args, **kwds):
-        if type(self.a) == tuple:
-            return self._expand()
-        return self._qPochhammer1(self.a, self.q, self.n)
+        if len(args) != self.m + 2:
+            raise RuntimeError, args
+
+        if args[-1] == oo:
+            return None
+
+        return self.evaluate(args[:self.m], args[-2], args[-1])
         
     def evaluate(self, a, q, n):
-        
-        if type(self.a) == tuple:
-            return self._expand()
+        if type(a) == tuple:
+            return self._expand(a, q, n)
         return self._qPochhammer1(a, q, n)
 
 

@@ -7,7 +7,7 @@ class QuantumClebschGordanCoefficients():
     (iii) j \leq l_1 - l_2 \leq -j \leq l \leq l_1 + l_2
     (iv)  -j \leq l_1 - l_2 \leq j \leq l \leq l_1 + l_2'''
 
-    def __init__(self, q, l1, l2, l, j1, j2, j, expand=True):
+    def __init__(self, q, l1, l2, l, j1, j2, j, expand_exp=True):
         self.l1 = l1
         self.l2 = l2
         self.l = l
@@ -15,7 +15,7 @@ class QuantumClebschGordanCoefficients():
         self.j1 = j1
         self.j2 = j2
         self.j = j
-        self.expand = expand
+        self.expand = expand_exp
 
     def __repr__(self):
         return 'C_{%s}(%s, %s, %s; %s, %s, %s)' % (self.q, self.l1, self.l2, self.l, \
@@ -78,8 +78,8 @@ class QuantumClebschGordanCoefficients():
         if self.currentClass() == 0:
             return 0
 
-        qpoch = qPochhammer(1, expand=True)
-        bhs   = BasicHypergeometricSeries(3,2,expand=True)
+        qpoch = qPochhammer(1, expand_exp=True)
+        bhs   = BasicHypergeometricSeries(3,2,expand_exp=True)
         l1, l2, l, q, j1, j2, j = self.l1, self.l2, self.l, self.q, \
                                   self.j1, self.j2, self.j
 
@@ -114,7 +114,7 @@ class QuantumClebschGordanCoefficients():
         return line1*line2*line3*line4
 
 def quantum_clebsch_gordan(q, l1, l2, l, j1, j2, j, algorithm='sage'):
-    cg = ClebschGordanCoefficients(q, l1, l2, l, j1, j2, j)
+    cg = QuantumClebschGordanCoefficients(q, l1, l2, l, j1, j2, j)
     cg.transform2one()    
 
     evaluation = cg.evaluate()
