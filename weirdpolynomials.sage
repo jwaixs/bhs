@@ -108,22 +108,33 @@ def generate_weird_polynomials(recurrence):
     return polynomials
 
 # Functional programming alert!
-datafiles = ['data/rec10.sobj', 'data/rec20.sobj', 'data/rec30.sobj']
+datafiles = ['data/rec10.sobj']#, 'data/rec20.sobj', 'data/rec30.sobj', 'data/rec40.sobj']
 recurrence_relation = sum(map(lambda s : load(s), datafiles), [])
 polynomials = generate_weird_polynomials(recurrence_relation)
 
 def give_roots(polynomial, q_value):
     newp = F(polynomial.substitute(q=q_value))
+    if newp.degree() == 0:
+        return []
     roots = newp.roots()
     assert [ mult == 1 for (zero, mult) in roots ]
     return [ zero for (zero, mult) in roots ]
 
 print
-print "Calculate zeros"
-q_values = [1/4, 1/2, 3/4]
-all_roots = {newq : [] for newq in q_values}
+print "Calculate zeros (could talk a while):"
 
-for polynomial in polynomials[1:]:
-    for newq in q_values:
-        all_roots[newq].append(give_roots(polynomial, newq))
-        print all_roots[newq][-1]
+q_values = [1/8, 1/4, 3/8, 1/2, 5/8, 3/4, 7/8]
+all_roots = { value : len(polynomials)*[[]] for value in q_values }
+NUM_CORES = 2
+FILE_NAME = 'data/roots'
+
+@parallel(NUM_CORES) 
+def roots_parallel(i, newq):
+    return give_roots(polynomials[i], newq)
+
+gen = roots_parallel([elm for elm in \
+    product(range(len(polynomials)), q_values)])
+for a, root in gen:
+    print a[0][0], a[0][1]
+    all_roots[a[0][1]][a[0][0]] = root
+    save(all_roots, FILE_NAME)
