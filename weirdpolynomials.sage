@@ -1,9 +1,11 @@
 from itertools import product
 
 load('functions/bhs.sage')
+load('functions/qclebschgordan.sage')
 
-q = var('q')
-x = var('x')
+# Define variables q, x over a real field with high precision
+R.<q,x> = RealField(1000)[]
+F = PolynomialRing(RealField(1000), 'x')
 
 def recrel_a(q, l1, l2, m1, m2, l):
     r"""
@@ -108,4 +110,20 @@ def generate_weird_polynomials(recurrence):
 # Functional programming alert!
 datafiles = ['data/rec10.sobj', 'data/rec20.sobj', 'data/rec30.sobj']
 recurrence_relation = sum(map(lambda s : load(s), datafiles), [])
+polynomials = generate_weird_polynomials(recurrence_relation)
 
+def give_roots(polynomial, q_value):
+    newp = F(polynomial.substitute(q=q_value))
+    roots = newp.roots()
+    assert [ mult == 1 for (zero, mult) in roots ]
+    return [ zero for (zero, mult) in roots ]
+
+print
+print "Calculate zeros"
+q_values = [1/4, 1/2, 3/4]
+all_roots = {newq : [] for newq in q_values}
+
+for polynomial in polynomials[1:]:
+    for newq in q_values:
+        all_roots[newq].append(give_roots(polynomial, newq))
+        print all_roots[newq][-1]
