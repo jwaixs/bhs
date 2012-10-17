@@ -1,4 +1,4 @@
-load('bhs.sage')
+#load('bhs.sage')
 
 class QuantumClebschGordanCoefficients():
     '''Clebsch-Gordan Coefficients for SU_q(2):
