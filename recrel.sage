@@ -1,6 +1,6 @@
 from itertools import product
 
-load('bhs.sage')
+load('functions/bhs.sage')
 
 def recrel_a(q, l1, l2, m1, m2, l):
     total_sum = 0
