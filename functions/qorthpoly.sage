@@ -81,31 +81,39 @@ class DualqKrawchoukPolynomials(BuiltinFunction):
 # At the moment (10 October 2012) these are unknown polynomials. I'll call them
 # Twisted Quantum q-Krawtchouk polynomials.
 
-class TwistedQuantumqKrawtchoukPolynomials():
+def twisted_quantum_q_krawtchouk_polynomials(N, q):
+    polynomials = [1, x/(1-q**N)]
+    for n in range(2, N+1):
+        polynomial = x/(1-q**(N-n+1))*polynomials[n-1] - \
+                     (1-q**(n-1))/(1-q**(N-n+1))*polynomials[n-2]
+        polynomials.append(polynomial)
+    return polynomials
 
-    def __init__(self, N):
-        self.N = N
-        self.evaluate_monic_polynomials(self.N)
-        self.evaluate_easy_polynomials(self.N)
-        
-    def evaluate_monic_polynomials(self, N):
-        q, x = var('q x')
-        result = [1, x]
-
-        for r in range(2,N+1):
-            pr = x*result[r-1] - (1-q**(r-1))*(1-q**(N-r+2))*result[r-2]
-            result.append(pr)
-
-        self.monic_polynomials = result
-
-    def evaluate_easy_polynomials(self, N):
-        q, x = var('q x')
-        result = [1, x/(1-q**N)]
-
-        for r in range(2, N+1):
-            pr = x*result[r-1]/(1 - q**(N-r+1)) \
-                - (1-q**(r-1))/(1 - q**(N-r+1))*result[r-2]
-            result.append(pr)
-
-        self.easy_polynomials = result
-
+#class TwistedQuantumqKrawtchoukPolynomials():
+#
+#    def __init__(self, N):
+#        self.N = N
+#        self.evaluate_monic_polynomials(self.N)
+#        self.evaluate_easy_polynomials(self.N)
+#        
+#    def evaluate_monic_polynomials(self, N):
+#        q, x = var('q x')
+#        result = [1, x]
+#
+#        for r in range(2,N+1):
+#            pr = x*result[r-1] - (1-q**(r-1))*(1-q**(N-r+2))*result[r-2]
+#            result.append(pr)
+#
+#        self.monic_polynomials = result
+#
+#    def evaluate_easy_polynomials(self, N):
+#        q, x = var('q x')
+#        result = [1, x/(1-q**N)]
+#
+#        for r in range(2, N+1):
+#            pr = x*result[r-1]/(1 - q**(N-r+1)) \
+#                - (1-q**(r-1))/(1 - q**(N-r+1))*result[r-2]
+#            result.append(pr)
+#
+#        self.easy_polynomials = result
+#
