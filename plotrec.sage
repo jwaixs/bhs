@@ -1,4 +1,4 @@
-q = var('q')
+F.<q> = FunctionField(RealField(1000))
 recurrence = load('data/rec10') + load('data/rec20')
 
 #recplots = []
@@ -24,8 +24,9 @@ recurrence = load('data/rec10') + load('data/rec20')
 #
 #sum(newplot).save('plots/recurrencepoints.png')
 
-recplots = []
-for n in range(1, 10):
-    plot_function = recurrence[n][0]**2 * recurrence[n-1][1]**2
-    recplots.append(plot(plot_function, q, 0, 1, rgbcolor=hue(n/10.0)))
-sum(recplots).sage('plots/monicreccurence.png')
+def plot_monic(reclist):
+    recplots = []
+    for n in range(1, len(reclist)):
+        plot_function = reclist[n][0]**2 * reclist[n-1][1]**2
+        recplots.append(plot(plot_function, q, 0, 1, rgbcolor=hue(float(n)/len(reclist))))
+    return recplots
